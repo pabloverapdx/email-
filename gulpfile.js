@@ -2,6 +2,8 @@ var gulp = require('gulp');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var concat = require('gulp-concat');
+var jshint = require('gulp-jshint');
+var uglify = require('gulp-uglify');
 
 gulp.task ('concatInterface', function() {
   return gulp.src(['./js/*-interface.js'])
@@ -14,4 +16,16 @@ gulp.task('jsBrowserify', ['concatInterface'], function() {
   .bundle()
   .pipe(source('app.js'))
   .pipe(gulp.dest('./build/js'));
+});
+
+gulp.task('jshint', function(){
+  return gulp.src(['js/*.js'])
+    .pipe(jshint())
+    .pipe(jshint.reporter('default'));
+});
+
+gulp.task("minifyScripts", ["jsBrowserify"], function(){
+  return gulp.src("./build/js/app.js")
+    .pipe(uglify())
+    .pipe(gulp.dest("./build/js"));
 });
